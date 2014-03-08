@@ -34,11 +34,11 @@ type SubsetChooser struct {
 
 // Creates a new SubsetChooser
 func NewSubsetChooser(maxIdx uint, subsetSize uint) *SubsetChooser {
-	ch := &SubsetChooser{maxIdx, subsetSize, 0}
 	if subsetSize > 63 {
 		panic("sorry, this class can't handle subset sizes greater than 63" +
 			"due to its use of 64-bit numbers to represent subsets.")
 	}
+	ch := &SubsetChooser{maxIdx, subsetSize, 0}
 	ch.comb = pow64(2, uint(subsetSize)) - 1
 	return ch
 }

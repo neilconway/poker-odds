@@ -42,36 +42,38 @@ func (p Card) Copy() *Card {
 	return &Card{p.val, p.suit}
 }
 
-func cardValToStr(v int) string {
-	switch {
-	case v == 11:
+func rankToStr(r int) string {
+	switch r {
+	case 11:
 		return "J"
-	case v == 12:
+	case 12:
 		return "Q"
-	case v == 13:
+	case 13:
 		return "K"
-	case v == 14:
+	case 14:
 		return "A"
+	default:
+		return fmt.Sprintf("%d", r)
 	}
-	return fmt.Sprintf("%d", v)
 }
 
 func suitToStr(s int) string {
-	switch {
-	case s == CLUBS:
+	switch s {
+	case CLUBS:
 		return "♣C"
-	case s == DIAMONDS:
+	case DIAMONDS:
 		return "♦D"
-	case s == HEARTS:
+	case HEARTS:
 		return "♥H"
-	case s == SPADES:
+	case SPADES:
 		return "♠S"
+	default:
+		panic(fmt.Sprintf("invalid suit %d", s))
 	}
-	panic(fmt.Sprintf("invalid suit %d", s))
 }
 
 func (c *Card) String() string {
-	return fmt.Sprintf("%s%s", cardValToStr(c.val), suitToStr(c.suit))
+	return fmt.Sprintf("%s%s", rankToStr(c.val), suitToStr(c.suit))
 }
 
 /* It's important that the cards compare in this order. It makes detecting

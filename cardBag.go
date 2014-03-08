@@ -74,6 +74,5 @@ func (bag *CardBag) Len() int {
 }
 
 func (bag *CardBag) String() string {
-	return fmt.Sprintf("CardBag{allCards=%v}",
-		bag.allCards)
+	return fmt.Sprintf("CardBag{allCards=%v}", bag.allCards)
 }

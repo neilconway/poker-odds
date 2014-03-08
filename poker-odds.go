@@ -56,7 +56,7 @@ func checkHoleLength(hlen int) {
 	if hlen == 2 {
 		return
 	}
-	fmt.Printf("illegal hole length. Expected a length of 2, " +
+	fmt.Printf("illegal hole length. Expected a length of 2, "+
 		"but you gave %d hole cards.\n", hlen)
 	os.Exit(1)
 }
@@ -76,7 +76,7 @@ func checkBoardLength(blen int) {
 		}
 	}
 
-	fmt.Printf("illegal board length. Expected a length of %s, " +
+	fmt.Printf("illegal board length. Expected a length of %s, "+
 		"but your board length was %d.\n", intsToStr(validLens), blen)
 	os.Exit(1)
 }
@@ -153,9 +153,9 @@ func main() {
 	base := make(CardSlice, len(board)+len(hole))
 	copy(base, board)
 	copy(base[len(board):], hole)
-	fmt.Printf("base: %s\n", base.String());
+	fmt.Printf("base: %s\n", base.String())
 	if dupe := base.HasDuplicates(); dupe != nil {
-		fmt.Printf("The card %s appears more than once in your input! " +
+		fmt.Printf("The card %s appears more than once in your input! "+
 			"That is not possible.\n", dupe)
 		os.Exit(1)
 	}

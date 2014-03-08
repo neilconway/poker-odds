@@ -299,32 +299,32 @@ func (h *Hand) String() string {
 		ret += "HIGH CARD"
 	case PAIR:
 		ret += "PAIR of "
-		ret += cardValToStr(h.val[0])
+		ret += rankToStr(h.val[0])
 	case TWO_PAIR:
 		ret += "TWO PAIR of "
-		ret += cardValToStr(h.val[0])
+		ret += rankToStr(h.val[0])
 		ret += " and "
-		ret += cardValToStr(h.val[1])
+		ret += rankToStr(h.val[1])
 	case THREE_OF_A_KIND:
 		ret += "THREE OF A KIND of "
-		ret += cardValToStr(h.val[0])
+		ret += rankToStr(h.val[0])
 	case STRAIGHT:
 		ret += "STRAIGHT with high of "
-		ret += cardValToStr(h.val[0])
+		ret += rankToStr(h.val[0])
 	case FLUSH:
 		ret += "FLUSH in "
 		ret += suitToStr(h.flushSuit)
 	case FULL_HOUSE:
 		ret += "FULL HOUSE of "
-		ret += cardValToStr(h.val[0])
+		ret += rankToStr(h.val[0])
 		ret += " full of "
-		ret += cardValToStr(h.val[1])
+		ret += rankToStr(h.val[1])
 	case FOUR_OF_A_KIND:
 		ret += "FOUR OF A KIND of "
-		ret += cardValToStr(h.val[0])
+		ret += rankToStr(h.val[0])
 	case STRAIGHT_FLUSH:
 		ret += "STRAIGHT FLUSH with high of "
-		ret += cardValToStr(h.val[0])
+		ret += rankToStr(h.val[0])
 		ret += " in "
 		ret += suitToStr(h.flushSuit)
 	}
