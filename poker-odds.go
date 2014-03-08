@@ -56,13 +56,13 @@ func checkHoleLength(hlen int) {
 	if hlen == 2 {
 		return
 	}
-	fmt.Printf("illegal hole length. Expected a length of 2, "+
+	fmt.Printf("illegal hole length. Expected a length of 2, " +
 		"but you gave %d hole cards.\n", hlen)
 	os.Exit(1)
 }
 
 func checkBoardLength(blen int) {
-	var validLens = []int{0, 3, 4, 5}
+	validLens := []int{0, 3, 4, 5}
 	for i := range validLens {
 		if blen == validLens[i] {
 			if blen == 0 {
@@ -76,7 +76,7 @@ func checkBoardLength(blen int) {
 		}
 	}
 
-	fmt.Printf("illegal board length. Expected a length of %s, "+
+	fmt.Printf("illegal board length. Expected a length of %s, " +
 		"but your board length was %d.\n", intsToStr(validLens), blen)
 	os.Exit(1)
 }
@@ -95,12 +95,12 @@ func processHand(h *Hand) {
 	fmt.Printf("%s\n", h.String())
 }
 
-/* Assumptions: we are the only players in the game
+/* Assumptions: we are the only player in the game
  * (Future enhancement: allow the user to specify cards that other players hold!)
  *
  * 1. Get inputs
  * a. your hand (required)
- * b. the board (0 cards, 3 , 4, or 5 cards)
+ * b. the board (0 cards, 3, 4, or 5 cards)
  *         Other numbers of cards represent errors
  *         (Future enhancement: support other poker games besides Texas Hold em')
  *
@@ -113,13 +113,12 @@ func processHand(h *Hand) {
  *
  */
 func main() {
-	///// Parse and validate user input /////
 	flag.Usage = usage
-	var verbose = flag.Bool("v", false, "verbose")
-	var help = flag.Bool("h", false, "help")
-	var holeStr = flag.String("a", "", "your two hole cards")
-	var boardStr = flag.String("b", "", "the board")
-	var numCsp = flag.Int("g", 3, "number of goprocs")
+	verbose := flag.Bool("v", false, "verbose")
+	help := flag.Bool("h", false, "help")
+	holeStr := flag.String("a", "", "your two hole cards")
+	boardStr := flag.String("b", "", "the board")
+	numCsp := flag.Int("g", 3, "number of goprocs")
 
 	flag.Parse()
 	if *help {
@@ -131,9 +130,7 @@ func main() {
 		usage()
 		os.Exit(1)
 	}
-	var hole CardSlice
-	var errIdx int
-	hole, errIdx = StrToCards(*holeStr)
+	hole, errIdx := StrToCards(*holeStr)
 	if errIdx != -1 {
 		fmt.Printf("Error parsing your hole cards: parse error at character %d\n",
 			errIdx)
@@ -143,8 +140,7 @@ func main() {
 	if *verbose {
 		fmt.Printf("Your hole cards: '%s'\n", hole.String())
 	}
-	var board CardSlice
-	board, errIdx = StrToCards(*boardStr)
+	board, errIdx := StrToCards(*boardStr)
 	if errIdx != -1 {
 		fmt.Printf("Error parsing the board: parse error at character %d\n",
 			errIdx)
@@ -157,9 +153,9 @@ func main() {
 	base := make(CardSlice, len(board)+len(hole))
 	copy(base, board)
 	copy(base[len(board):], hole)
-	dupe := base.HasDuplicates()
-	if dupe != nil {
-		fmt.Printf("The card %s appears more than once in your input! "+
+	fmt.Printf("base: %s\n", base.String());
+	if dupe := base.HasDuplicates(); dupe != nil {
+		fmt.Printf("The card %s appears more than once in your input! " +
 			"That is not possible.\n", dupe)
 		os.Exit(1)
 	}
