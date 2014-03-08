@@ -88,7 +88,6 @@ func HandTyToStr(ty int) string {
 	default:
 		panic(fmt.Sprintf("unexpected hand type %d", ty))
 	}
-	return ""
 }
 
 func handTyHasKicker(ty int) bool {

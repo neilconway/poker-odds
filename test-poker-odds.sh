@@ -12,10 +12,10 @@ cleanup() {
 
 poker_odds="`dirname $0`/poker-odds"
 [ -x "${poker_odds}" ] || die "failed to locate the poker-odds executable"
-tmp=`mktemp`
-tmp2=`mktemp`
-echo > "${tmp}" || die "unable to create tmp"
-echo > "${tmp2}" || die "unable to create tmp2"
+tmp=`mktemp /tmp/poker-odds.XXXXXX`
+tmp2=`mktemp /tmp/poker-odds.XXXXXX`
+touch "${tmp}" || die "unable to create ${tmp}"
+touch "${tmp2}" || die "unable to create ${tmp2}"
 trap cleanup INT TERM EXIT
 
 "${poker_odds}" -a "KS QS" -b "AS 3S 5S" > "${tmp}"

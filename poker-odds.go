@@ -153,7 +153,6 @@ func main() {
 	base := make(CardSlice, len(board)+len(hole))
 	copy(base, board)
 	copy(base[len(board):], hole)
-	fmt.Printf("base: %s\n", base.String())
 	if dupe := base.HasDuplicates(); dupe != nil {
 		fmt.Printf("The card %s appears more than once in your input! "+
 			"That is not possible.\n", dupe)
