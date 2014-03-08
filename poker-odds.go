@@ -24,7 +24,7 @@ import (
 
 func usage() {
 	fmt.Fprintf(os.Stderr,
-`%s: the Texas Hold Em' poker odds calculator.
+		`%s: the Texas Hold Em' poker odds calculator.
 
 This program calculates your 'outs' for a Texas Hold Em' poker hand.
 Texas Hold Em' is a popular version of poker where each player receives
@@ -53,19 +53,19 @@ Find the outs you have pre-flop with a king and queen of spades.
 }
 
 func checkHoleLength(hlen int) {
-	if (hlen == 2) {
+	if hlen == 2 {
 		return
 	}
-	fmt.Printf("illegal hole length. Expected a length of 2, " +
+	fmt.Printf("illegal hole length. Expected a length of 2, "+
 		"but you gave %d hole cards.\n", hlen)
 	os.Exit(1)
 }
 
 func checkBoardLength(blen int) {
-	var validLens = []int { 0, 3, 4, 5 }
-	for i := range(validLens) {
-		if (blen == validLens[i]) {
-			if (blen == 0) {
+	var validLens = []int{0, 3, 4, 5}
+	for i := range validLens {
+		if blen == validLens[i] {
+			if blen == 0 {
 				fmt.Printf("Now calculating ALL possible hands that can be " +
 					"made starting with these hole cards. This will take a " +
 					"while! You may want to set GOMAXPROCS and use -g.\n" +
@@ -76,15 +76,15 @@ func checkBoardLength(blen int) {
 		}
 	}
 
-	fmt.Printf("illegal board length. Expected a length of %s, " +
+	fmt.Printf("illegal board length. Expected a length of %s, "+
 		"but your board length was %d.\n", intsToStr(validLens), blen)
 	os.Exit(1)
 }
 
-func intsToStr(s []int) (string) {
+func intsToStr(s []int) string {
 	ret := ""
 	sep := ""
-	for i := range(s) {
+	for i := range s {
 		ret += fmt.Sprintf("%s%d", sep, s[i])
 		sep = ", "
 	}
@@ -97,13 +97,13 @@ func processHand(h *Hand) {
 
 /* Assumptions: we are the only players in the game
  * (Future enhancement: allow the user to specify cards that other players hold!)
- * 
+ *
  * 1. Get inputs
  * a. your hand (required)
  * b. the board (0 cards, 3 , 4, or 5 cards)
  *         Other numbers of cards represent errors
  *         (Future enhancement: support other poker games besides Texas Hold em')
- * 
+ *
  * 2. for all possible final boards:
  *        Determine the best type of hand we can make with this board and the
  *        hole cards.
@@ -113,7 +113,7 @@ func processHand(h *Hand) {
  *
  */
 func main() {
-	///// Parse and validate user input ///// 
+	///// Parse and validate user input /////
 	flag.Usage = usage
 	var verbose = flag.Bool("v", false, "verbose")
 	var help = flag.Bool("h", false, "help")
@@ -122,11 +122,11 @@ func main() {
 	var numCsp = flag.Int("g", 3, "number of goprocs")
 
 	flag.Parse()
-	if (*help) {
+	if *help {
 		usage()
 		os.Exit(0)
 	}
-	if (*holeStr == "") {
+	if *holeStr == "" {
 		fmt.Printf("You must give two hole cards with -a\n")
 		usage()
 		os.Exit(1)
@@ -134,73 +134,73 @@ func main() {
 	var hole CardSlice
 	var errIdx int
 	hole, errIdx = StrToCards(*holeStr)
-	if (errIdx != -1) {
+	if errIdx != -1 {
 		fmt.Printf("Error parsing your hole cards: parse error at character %d\n",
-					errIdx)
+			errIdx)
 		os.Exit(1)
 	}
 	checkHoleLength(len(hole))
-	if (*verbose) {
-		fmt.Printf("Your hole cards: '%s'\n", hole.String());
+	if *verbose {
+		fmt.Printf("Your hole cards: '%s'\n", hole.String())
 	}
 	var board CardSlice
 	board, errIdx = StrToCards(*boardStr)
-	if (errIdx != -1) {
+	if errIdx != -1 {
 		fmt.Printf("Error parsing the board: parse error at character %d\n",
-					errIdx)
+			errIdx)
 		os.Exit(1)
 	}
 	checkBoardLength(len(board))
-	if (*verbose) {
-		fmt.Printf("The board: '%s'\n", board.String());
+	if *verbose {
+		fmt.Printf("The board: '%s'\n", board.String())
 	}
-	base := make(CardSlice, len(board) + len(hole))
+	base := make(CardSlice, len(board)+len(hole))
 	copy(base, board)
 	copy(base[len(board):], hole)
 	dupe := base.HasDuplicates()
-	if (dupe != nil) {
-		fmt.Printf("The card %s appears more than once in your input! " +
+	if dupe != nil {
+		fmt.Printf("The card %s appears more than once in your input! "+
 			"That is not possible.\n", dupe)
 		os.Exit(1)
 	}
 
-	///// Process cards ///// 
+	///// Process cards /////
 	csps := make([]*CardSliceProcessor, *numCsp)
-	for i := range(csps) {
+	for i := range csps {
 		csps[i] = NewCardSliceProcessor(base)
 		go csps[i].GoCardSliceProcessor()
 	}
 
 	future := Make52CardBag()
-	for i := range(base) {
+	for i := range base {
 		future.Subtract(base[i])
 	}
 	numFutureCards := SPREAD_MAX - len(base)
-	futureChooser := NewSubsetChooser(uint(future.Len() - 1), uint(numFutureCards))
+	futureChooser := NewSubsetChooser(uint(future.Len()-1), uint(numFutureCards))
 	cspIdx := 0
-	for ;; {
+	for {
 		futureC := futureChooser.Cur()
 		for i := 0; i < numFutureCards; i++ {
 			csps[cspIdx].Card <- future.Get(futureC[i])
 		}
 		cspIdx++
-		if (cspIdx >= *numCsp) {
+		if cspIdx >= *numCsp {
 			cspIdx = 0
 		}
-		if (!futureChooser.Next()) {
+		if !futureChooser.Next() {
 			break
 		}
 	}
 
 	// Tell cardSliceProcessors to finish
-	for i := range(csps) {
+	for i := range csps {
 		csps[i].Quit <- true
 	}
 
 	// Once each cardSliceProcessor is finished, get its results
 	// Merge all results together
 	allResults := new(ResultSet)
-	for i := range(csps) {
+	for i := range csps {
 		<-csps[i].Finished
 		allResults.MergeResultSet(&csps[i].Results)
 	}

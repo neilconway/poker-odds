@@ -17,11 +17,11 @@
 package main
 
 type CardSliceProcessor struct {
-	Card chan *Card
-	Quit chan bool
+	Card     chan *Card
+	Quit     chan bool
 	Finished chan bool
-	base CardSlice
-	Results ResultSet
+	base     CardSlice
+	Results  ResultSet
 }
 
 func NewCardSliceProcessor(base_ CardSlice) *CardSliceProcessor {
@@ -36,15 +36,15 @@ func NewCardSliceProcessor(base_ CardSlice) *CardSliceProcessor {
 func (csp *CardSliceProcessor) processSpread(spread CardSlice) {
 	setupChooser := NewSubsetChooser(SPREAD_MAX, HAND_SZ)
 	var tmpRes ResultSet
-	for ;; {
+	for {
 		setup := setupChooser.Cur()
 		setupC := make(CardSlice, len(setup))
-		for i := range(setup) {
+		for i := range setup {
 			setupC[i] = spread[setup[i]]
 		}
 		h := MakeHand(setupC)
 		tmpRes.AddHand(h)
-		if (!setupChooser.Next()) {
+		if !setupChooser.Next() {
 			break
 		}
 	}
@@ -56,7 +56,7 @@ func (csp *CardSliceProcessor) GoCardSliceProcessor() {
 	copy(spread, csp.base)
 	j := len(csp.base)
 	for {
-		if (j == len(spread)) {
+		if j == len(spread) {
 			csp.processSpread(spread)
 			j = len(csp.base)
 		}
@@ -66,7 +66,7 @@ func (csp *CardSliceProcessor) GoCardSliceProcessor() {
 			spread[j] = c
 			j++
 		case <-csp.Quit:
-			csp.Finished <-true
+			csp.Finished <- true
 			return
 		}
 	}

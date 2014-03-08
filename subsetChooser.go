@@ -27,15 +27,15 @@ import (
  * step through [ "a", "b" ], [ "a", "c" ], and [ "b", "c" ]. Etc.
  */
 type SubsetChooser struct {
-	maxIdx uint
+	maxIdx     uint
 	subsetSize uint
-	comb int64
+	comb       int64
 }
 
 // Creates a new SubsetChooser
 func NewSubsetChooser(maxIdx uint, subsetSize uint) *SubsetChooser {
-	ch := &SubsetChooser {maxIdx, subsetSize, 0}
-	if (subsetSize > 63) {
+	ch := &SubsetChooser{maxIdx, subsetSize, 0}
+	if subsetSize > 63 {
 		panic("sorry, this class can't handle subset sizes greater than 63" +
 			"due to its use of 64-bit numbers to represent subsets.")
 	}
@@ -49,14 +49,14 @@ func (ch *SubsetChooser) Cur() []uint {
 	ret := make([]uint, ch.subsetSize)
 	var j uint = 0
 	for i = 0; i < ch.maxIdx; i++ {
-		if (((1 << i) & ch.comb) != 0) {
+		if ((1 << i) & ch.comb) != 0 {
 			ret[j] = i
 			j++
 		}
 	}
-	if (j != ch.subsetSize) {
+	if j != ch.subsetSize {
 		panic(fmt.Sprintf("logic error: failed to return a subset of size %d",
-							ch.subsetSize))
+			ch.subsetSize))
 	}
 	return ret
 }
@@ -65,17 +65,17 @@ func (ch *SubsetChooser) Cur() []uint {
 // Based on HAKMEM item 175.
 // Returns false if there are no more subsets to view, true otherwise
 func (ch *SubsetChooser) Next() bool {
-	if (ch.comb == 0) {
+	if ch.comb == 0 {
 		return false
 	}
 	u := ch.comb & -ch.comb
 	v := u + ch.comb
-	if (v==0) {
+	if v == 0 {
 		ch.comb = 0
 		return false
 	}
-	ch.comb = v + (((v^ch.comb)/u)>>2);
-	if (ch.comb >= (1<<ch.maxIdx)) {
+	ch.comb = v + (((v ^ ch.comb) / u) >> 2)
+	if ch.comb >= (1 << ch.maxIdx) {
 		ch.comb = 0
 		return false
 	}

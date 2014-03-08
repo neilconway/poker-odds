@@ -22,29 +22,29 @@ import (
 
 func TestCardBag1(t *testing.T) {
 	bag := Make52CardBag()
-	test0 := Card { 2, DIAMONDS }
+	test0 := Card{2, DIAMONDS}
 	bag0 := bag.Get(0)
-	if (test0.Compare(bag0) != 0) {
+	if test0.Compare(bag0) != 0 {
 		t.Errorf("expected:%s. got: %s\n", test0, bag0)
 	}
 
-	test1 := Card { 3, DIAMONDS }
+	test1 := Card{3, DIAMONDS}
 	bag1 := bag.Get(4)
-	if (test1.Compare(bag1) != 0) {
+	if test1.Compare(bag1) != 0 {
 		t.Errorf("expected:%s. got: %s\n", test1, bag1)
 	}
 
-	bag.Subtract( &Card {2, DIAMONDS} )
+	bag.Subtract(&Card{2, DIAMONDS})
 
-	test2 := &Card { 2, CLUBS }
+	test2 := &Card{2, CLUBS}
 	bag2 := bag.Get(0)
-	if (test2.Compare(bag2) != 0) {
+	if test2.Compare(bag2) != 0 {
 		t.Errorf("expected:%s. got: %s\n", test2, bag2)
 	}
 
-	test3 := &Card { 3, CLUBS }
+	test3 := &Card{3, CLUBS}
 	bag3 := bag.Get(4)
-	if (test3.Compare(bag3) != 0) {
+	if test3.Compare(bag3) != 0 {
 		t.Errorf("expected:%s. got: %s\n", test3, bag3)
 	}
 

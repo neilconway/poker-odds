@@ -39,15 +39,15 @@ func (arr uintSliceSlice) Swap(i, j int) {
 }
 
 func (a uintSlice) Compare(b uintSlice) int {
-	if (len(a) < len(b)) {
+	if len(a) < len(b) {
 		return -1
-	} else if (len(a) > len(b)) {
-		return 1;
+	} else if len(a) > len(b) {
+		return 1
 	}
 	for i := 0; i < len(a); i++ {
-		if (a[i] < b[i]) {
+		if a[i] < b[i] {
 			return -1
-		} else if (a[i] > b[i]) {
+		} else if a[i] > b[i] {
 			return 1
 		}
 	}
@@ -55,14 +55,14 @@ func (a uintSlice) Compare(b uintSlice) int {
 }
 
 func (a uintSliceSlice) Compare(b uintSliceSlice) int {
-	if (len(a) < len(b)) {
+	if len(a) < len(b) {
 		return -1
-	} else if (len(a) > len(b)) {
-		return 1;
+	} else if len(a) > len(b) {
+		return 1
 	}
 	for i := 0; i < len(a); i++ {
 		c := a[i].Compare(b[i])
-		if (c != 0) {
+		if c != 0 {
 			return c
 		}
 	}
@@ -96,30 +96,30 @@ func (arr uintSliceSlice) String() string {
 }
 
 func test(t *testing.T, maxIdx uint, subsetSize uint,
-			expected *uintSliceSlice) {
+	expected *uintSliceSlice) {
 	var all uintSliceSlice
 	ch := NewSubsetChooser(maxIdx, subsetSize)
-	for ;; {
+	for {
 		s := ch.Cur()
 		all = append(all, s)
-		if (!ch.Next()) {
+		if !ch.Next() {
 			break
 		}
 	}
 	sort.Sort(all)
 	sort.Sort(expected)
-	if (all.Compare(*expected) != 0) {
+	if all.Compare(*expected) != 0 {
 		t.Errorf("expected:%s. got: %s\n",
 			expected.String(), all.String())
 	}
 }
 
 func TestSubsetChooser1(t *testing.T) {
-	test(t, 3, 2, &uintSliceSlice{ {0, 1}, {0, 2}, {1, 2} } )
-	test(t, 2, 1, &uintSliceSlice{ {0}, {1} } )
-	test(t, 3, 1, &uintSliceSlice{ {0}, {1}, {2} } )
-	test(t, 3, 3, &uintSliceSlice{ {0, 1, 2} } )
-	test(t, 4, 3, &uintSliceSlice{ {0, 1, 2}, {0, 1, 3}, {0, 2, 3}, {1, 2, 3} } )
+	test(t, 3, 2, &uintSliceSlice{{0, 1}, {0, 2}, {1, 2}})
+	test(t, 2, 1, &uintSliceSlice{{0}, {1}})
+	test(t, 3, 1, &uintSliceSlice{{0}, {1}, {2}})
+	test(t, 3, 3, &uintSliceSlice{{0, 1, 2}})
+	test(t, 4, 3, &uintSliceSlice{{0, 1, 2}, {0, 1, 3}, {0, 2, 3}, {1, 2, 3}})
 
-	test(t, 100, 0, &uintSliceSlice{ {} })
+	test(t, 100, 0, &uintSliceSlice{{}})
 }

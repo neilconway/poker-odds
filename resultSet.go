@@ -21,7 +21,7 @@ import (
 )
 
 type ResultSet struct {
-	handTyCnt [MAX_HANDS] int64
+	handTyCnt [MAX_HANDS]int64
 }
 
 func (res *ResultSet) AddHand(h *Hand) {
@@ -34,7 +34,7 @@ func (res *ResultSet) AddHandTy(h int) {
 
 func (res *ResultSet) GetBestHandTy() int {
 	for i := MAX_HANDS - 1; i >= 0; i-- {
-		if (res.handTyCnt[i] > 0) {
+		if res.handTyCnt[i] > 0 {
 			return i
 		}
 	}
@@ -50,19 +50,18 @@ func (res *ResultSet) MergeResultSet(rhs *ResultSet) {
 func (res *ResultSet) String() string {
 	var totalHands int64
 	totalHands = 0
-	for i := range(res.handTyCnt) {
+	for i := range res.handTyCnt {
 		totalHands = totalHands + res.handTyCnt[i]
 	}
 
 	ret := ""
-	for i := range(res.handTyCnt) {
+	for i := range res.handTyCnt {
 		percent := float32(res.handTyCnt[i])
 		percent *= 100.0
-		percent /= float32(totalHands);
-		if (percent > 0.0) {
+		percent /= float32(totalHands)
+		if percent > 0.0 {
 			ret += fmt.Sprintf("%03.2f%% chance of %s\n", percent, HandTyToStr(i))
 		}
 	}
 	return ret
 }
-

@@ -30,10 +30,10 @@ const SPREAD_MAX = BOARD_MAX + HOLE_SZ
 const HAND_SZ = 5
 
 const (
-	JACK_VAL = 11
+	JACK_VAL  = 11
 	QUEEN_VAL = 12
-	KING_VAL = 13
-	ACE_VAL = 14
+	KING_VAL  = 13
+	ACE_VAL   = 14
 )
 
 const (
@@ -50,23 +50,23 @@ const (
 )
 
 func twc(a int, b int, alt int) int {
-	if (a < b) {
+	if a < b {
 		return -1
-	} else if (a > b) {
+	} else if a > b {
 		return 1
 	}
 	return alt
 }
 
 type Hand struct {
-	ty int
-	val [2]int
+	ty        int
+	val       [2]int
 	flushSuit int
-	cards CardSlice
+	cards     CardSlice
 }
 
 func HandTyToStr(ty int) string {
-	switch (ty) {
+	switch ty {
 	case HIGH_CARD:
 		return "nothing"
 	case PAIR:
@@ -124,7 +124,7 @@ func (h *Hand) Compare(rhs *Hand) int {
 	c := twc(h.ty, rhs.ty,
 		twc(h.val[0], rhs.val[0],
 			twc(h.val[1], rhs.val[1], 0)))
-	if ((c == 0) && (handTyHasKicker(h.ty))) {
+	if (c == 0) && (handTyHasKicker(h.ty)) {
 		c = h.cards.CompareKicker(rhs.cards)
 	}
 	return c
@@ -136,7 +136,7 @@ func (h *Hand) Identical(rhs *Hand) bool {
 	c := twc(h.ty, rhs.ty,
 		twc(h.val[0], rhs.val[0],
 			twc(h.val[1], rhs.val[1], 0)))
-	if (c != 0) {
+	if c != 0 {
 		return false
 	}
 	return h.cards.Identical(rhs.cards)
@@ -147,18 +147,18 @@ func MakeHandImpl(cardsIn CardSlice) *Hand {
 	// Sort the cards appropriately to make straight detection easier.
 	sort.Sort(cards)
 
-	h := &Hand{ -1, [2]int {-1, -1}, -1, cards }
-	var vals = make(map[int] int)
-	var suits = make(map[int] int)
-	for i := range(cards) {
+	h := &Hand{-1, [2]int{-1, -1}, -1, cards}
+	var vals = make(map[int]int)
+	var suits = make(map[int]int)
+	for i := range cards {
 		c := cards[i]
 		vals[c.val] = vals[c.val] + 1
 		suits[c.suit] = suits[c.suit] + 1
 	}
 
 	// check for flush
-	for i := range(suits) {
-		if (suits[i] >= 5) {
+	for i := range suits {
+		if suits[i] >= 5 {
 			h.flushSuit = i
 		}
 	}
@@ -166,7 +166,7 @@ func MakeHandImpl(cardsIn CardSlice) *Hand {
 	runEnd := -1
 	runLen := 0
 	prev := -1
-	if (cards[len(cards)-1].val == ACE_VAL) {
+	if cards[len(cards)-1].val == ACE_VAL {
 		// Aces play both low and high in straights.
 		//
 		// This is a special case where we have a bunch of cards where the
@@ -175,11 +175,11 @@ func MakeHandImpl(cardsIn CardSlice) *Hand {
 		// than it might seem without taking the ace into account.
 		runLen++
 	}
-	for i := range(cards) {
-		if (prev + 1 == cards[i].val) {
+	for i := range cards {
+		if prev+1 == cards[i].val {
 			runEnd = cards[i].val
 			runLen++
-			if (runLen >= 5) {
+			if runLen >= 5 {
 				// I know it may seem like by breaking out here, we may miss
 				// some potential straights. But remember that a poker hand is
 				// exactly 5 cards. So to have gotten to this point, all 5
@@ -190,7 +190,7 @@ func MakeHandImpl(cardsIn CardSlice) *Hand {
 				// weird.
 				break
 			}
-		} else if (prev == cards[i].val) {
+		} else if prev == cards[i].val {
 			// We have more than one card with the same value.
 			// The duplicate cards don't help us get a straight, but they also
 			// don't mean we don't have one.
@@ -200,26 +200,26 @@ func MakeHandImpl(cardsIn CardSlice) *Hand {
 		}
 		prev = cards[i].val
 	}
-	if ((runLen >= 5) && (h.flushSuit != -1)) {
+	if (runLen >= 5) && (h.flushSuit != -1) {
 		h.val[0] = runEnd
 		h.ty = STRAIGHT_FLUSH
 		return h
 	}
 
-	freqs := make(map[int] []int)
-	for k,v := range(vals) {
-		if (v > 4) {
+	freqs := make(map[int][]int)
+	for k, v := range vals {
+		if v > 4 {
 			panic(fmt.Sprintf("on hand %s, got %d of a kind for value %d (max is 4)\n",
 				cards.String(), v, k))
 		}
 		curFreqs := freqs[v]
 		m := 0
 		for m = 0; m < len(curFreqs); m++ {
-			if (curFreqs[m] >= k) {
+			if curFreqs[m] >= k {
 				break
 			}
 		}
-		newFreqs := make([]int, len(curFreqs) + 1)
+		newFreqs := make([]int, len(curFreqs)+1)
 		copy(newFreqs, curFreqs[:m])
 		newFreqs[m] = k
 		copy(newFreqs[m+1:], curFreqs[m:])
@@ -227,19 +227,19 @@ func MakeHandImpl(cardsIn CardSlice) *Hand {
 	}
 
 	// four of a kind
-	if (len(freqs[4]) > 0) {
+	if len(freqs[4]) > 0 {
 		h.ty = FOUR_OF_A_KIND
 		h.val[0] = freqs[4][0]
 		return h
 	}
 
 	// full house
-	if (len(freqs[3]) > 0) {
-		if (len(freqs[3]) > 1) {
+	if len(freqs[3]) > 0 {
+		if len(freqs[3]) > 1 {
 			h.val[0] = freqs[3][0]
 			h.val[1] = freqs[3][1]
 			h.ty = FULL_HOUSE
-		} else if (len(freqs[2]) > 0) {
+		} else if len(freqs[2]) > 0 {
 			h.val[0] = freqs[3][0]
 			h.val[1] = freqs[2][0]
 			h.ty = FULL_HOUSE
@@ -247,27 +247,27 @@ func MakeHandImpl(cardsIn CardSlice) *Hand {
 	}
 
 	// flush
-	if (h.flushSuit != -1) {
+	if h.flushSuit != -1 {
 		h.ty = FLUSH
 		return h
 	}
 
 	// straight
-	if (runLen >= 5) {
+	if runLen >= 5 {
 		h.val[0] = runEnd
 		h.ty = STRAIGHT
 		return h
 	}
 
 	// three of a kind
-	if (len(freqs[3]) > 0) {
+	if len(freqs[3]) > 0 {
 		h.val[0] = freqs[3][0]
 		h.ty = THREE_OF_A_KIND
 		return h
 	}
 
 	// two pairs
-	if (len(freqs[2]) >= 2) {
+	if len(freqs[2]) >= 2 {
 		h.val[0] = freqs[2][0]
 		h.val[1] = freqs[2][1]
 		h.ty = TWO_PAIR
@@ -275,7 +275,7 @@ func MakeHandImpl(cardsIn CardSlice) *Hand {
 	}
 
 	// a pair
-	if (len(freqs[2]) >= 1) {
+	if len(freqs[2]) >= 1 {
 		h.val[0] = freqs[2][0]
 		h.ty = PAIR
 		return h
@@ -292,10 +292,9 @@ func MakeHand(cards CardSlice) *Hand {
 	return ret
 }
 
-
 func (h *Hand) String() string {
 	ret := "Hand(ty:"
-	switch (h.ty) {
+	switch h.ty {
 	case HIGH_CARD:
 		ret += "HIGH CARD"
 	case PAIR:
@@ -332,7 +331,7 @@ func (h *Hand) String() string {
 
 	ret += ", cards:"
 	sep := ""
-	for c := range(h.cards) {
+	for c := range h.cards {
 		ret += sep
 		ret += h.cards[c].String()
 		sep = ", "
@@ -349,13 +348,13 @@ func (hs HandSlice) Len() int {
 }
 
 func (hs HandSlice) Less(i, j int) bool {
-	if (hs[i] == nil) {
-		if (hs[j] == nil) {
+	if hs[i] == nil {
+		if hs[j] == nil {
 			return false
 		} else {
 			return true
 		}
-	} else if (hs[j] == nil) {
+	} else if hs[j] == nil {
 		return false
 	}
 	c := hs[i].Compare(hs[j])
@@ -365,4 +364,3 @@ func (hs HandSlice) Less(i, j int) bool {
 func (hs HandSlice) Swap(i, j int) {
 	hs[i], hs[j] = hs[j], hs[i]
 }
-
