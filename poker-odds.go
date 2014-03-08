@@ -28,7 +28,7 @@ func usage() {
 
 This program calculates your 'outs' for a Texas Hold Em' poker hand.
 Texas Hold Em' is a popular version of poker where each player receives
-exactly two secret cards. Then there are five rounds of betting.
+exactly two secret cards. Then there are four rounds of betting.
 
 The format used to specify cards is as follows:
 [type][suit]
